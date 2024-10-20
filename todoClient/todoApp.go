@@ -16,25 +16,11 @@ func main() {
 		Priority:    todo.Priority(todo.HIGH),
 	}
 
-	err := taskManager.CreateTask(newTask)
+	id, err := taskManager.CreateTask(newTask)
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Println(taskManager.ToString())
-	}
-
-	err = taskManager.RemoveTask(1)
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println("Task removed")
-	}
-
-	err = taskManager.RemoveTask(newTask.Id)
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println("Task removed")
+		fmt.Println(id)
 	}
 
 }

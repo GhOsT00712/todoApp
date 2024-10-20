@@ -18,7 +18,7 @@ type Task struct {
 }
 
 // Method to print the Task
-func (task *Task) toString() string {
+func (task *Task) ToString() string {
 	return fmt.Sprintf("Task ID: %d\nHeader: %s\nDescription: %s\nCompleted: %t\nCreated At: %s\nCompleted At: %s\nDue: %s\nPriority: %d",
 		task.Id,
 		task.Header,
