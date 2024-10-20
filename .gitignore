@@ -1,0 +1,18 @@
+# Go binary files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Vendor directory
+/vendor/
+
+
+# IDE and editor files
+*.idea/
+*.vscode/
+*.swp
+
+# macOS DS_Store file
+.DS_Store
