@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"todoApp/todo"
+	"todo"
 )
 
 func main() {
