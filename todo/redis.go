@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
+	"time"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -39,7 +41,8 @@ func client() *redis.Client {
 func (rc *Redis) AddTask(task *Task) (string, error) {
 	key := fmt.Sprintf("Task:%d", task.Id)
 	println(key)
-	_, err := rc.redisClient.HSet(context.Background(), key, map[string]interface{}{
+	ctx := context.Background()
+	_, err := rc.redisClient.HSet(ctx, key, map[string]interface{}{
 		"id":          task.Id,
 		"header":      task.Header,
 		"description": task.Description,
@@ -49,9 +52,45 @@ func (rc *Redis) AddTask(task *Task) (string, error) {
 		"dueDate":     task.DueDate,
 		"priority":    task.Priority.String(),
 	}).Result()
-	if err == nil {
-		return key, nil
+	if err != nil {
+		return "", err
 	}
 
-	return "", err
+	return key, nil
+}
+
+func (rc *Redis) ScanTask() ([]string, error) {
+	res, _, err := rc.redisClient.Scan(context.Background(), 0, "Task:*", 1000).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+
+}
+
+func (rc *Redis) RemoveTask(id string) error {
+	ctx := context.Background()
+	_, err := rc.redisClient.Del(ctx, id).Result()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (rc *Redis) GetTask(id string) (task Task, err error) {
+	ctx := context.Background()
+	res, err := rc.redisClient.HGetAll(ctx, id).Result()
+	task.Id, _ = strconv.Atoi(res["id"])
+	task.Header = res["header"]
+	task.Description = res["description"]
+	task.CompletedAt, _ = time.Parse(time.RFC3339, res["completedAt"])
+	task.CreatedAt, _ = time.Parse(time.RFC3339, res["createdAt"])
+	task.DueDate, _ = time.Parse(time.RFC3339, res["dueDate"])
+	priorityValue, _ := strconv.Atoi(res["priority"])
+	task.Priority = Priority(priorityValue)
+	if err != nil {
+		return Task{}, err
+	}
+	return task, nil
 }

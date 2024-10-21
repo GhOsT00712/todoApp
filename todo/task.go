@@ -7,14 +7,14 @@ import (
 
 // Data structure to hold Task data
 type Task struct {
-	Id          int
-	Header      string
-	Description string
-	IsCompleted bool
-	CreatedAt   time.Time
-	CompletedAt time.Time
-	DueDate     time.Time
-	Priority    Priority
+	Id          int       `redis:"id"`
+	Header      string    `redis:"header"`
+	Description string    `redis:"description"`
+	IsCompleted bool      `redis:"isCompleted"`
+	CreatedAt   time.Time `redis:"createdAt"`
+	CompletedAt time.Time `redis:"completedAt"`
+	DueDate     time.Time `redis:"dueDate"`
+	Priority    Priority  `redis:"priority"`
 }
 
 // Method to print the Task

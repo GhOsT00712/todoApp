@@ -55,30 +55,42 @@ func (tm *TaskManager) CreateTask(newTask *Task) (string, error) {
 	return "", err
 }
 
-// Method to delete a Task
-// This function delete a new task to the tasks map.
-// Returns an error if the task id is invalid.
-// func (tm *TaskManager) RemoveTask(id int) error {
-// 	_, exists := tm.tasks[id]
+func (tm *TaskManager) GetAllTasks() ([]string, error) {
+	res, err := tm.dbClient.ScanTask()
+	if err != nil {
+		return nil, err
+	}
 
-// 	if !exists {
-// 		return errors.New("task not found")
-// 	}
-// 	delete(tm.tasks, id)
-// 	return nil
-// }
+	for _, v := range res {
+		println(v)
+	}
+
+	return res, nil
+}
+
+// Method to delete a Task
+func (tm *TaskManager) RemoveTask(id string) error {
+	err := tm.dbClient.RemoveTask(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 // // MarkTaskCompleted marks a task as completed by its ID
-// func (tm *TaskManager) MarkTaskCompleted(id int) error {
-// 	task, exists := tm.tasks[id]
-// 	if !exists {
-// 		return errors.New("task not found")
-// 	}
-// 	task.IsCompleted = true
-// 	task.CompletedAt = time.Now()
-// 	tm.tasks[id] = task
-// 	return nil
-// }
+func (tm *TaskManager) MarkTaskCompleted(id string) error {
+	task, err := tm.dbClient.GetTask(id)
+	if err != nil {
+		return err
+	}
+	task.IsCompleted = true
+	task.CompletedAt = time.Now()
+	_, err = tm.dbClient.AddTask(&task)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 // Method to print the Task
 // func (tm *TaskManager) ToString() string {
